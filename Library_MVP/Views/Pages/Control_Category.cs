@@ -1,0 +1,128 @@
+﻿using DevExpress.XtraEditors;
+using Library_MVP.Logic.Presenter;
+using Library_MVP.Views.Interface;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Library_MVP.Views.Pages
+{
+    public partial class Control_Category : DevExpress.XtraEditors.XtraUserControl, ICategory
+    {
+        CategoryPresenter catPresenter;
+        public Control_Category()
+        {
+            InitializeComponent();
+            LoadData();
+            catPresenter = new CategoryPresenter(this);
+        }
+
+        #region Implement interface
+        public int ID { get => Convert.ToInt32(txbIDCategory.Text.Trim()); set => txbIDCategory.Text = value.ToString(); }
+        public string CatName { get => Convert.ToString(txbNameCategory.Text.Trim()); set => txbNameCategory.Text = value; }
+        public object txbNameCat { get => txbNameCategory.Focus(); set => txbNameCategory.Focus(); }
+        object ICategory.btnAdd { get => btnAdd.Enabled; set => btnAdd.Enabled = Convert.ToBoolean(value); }
+        object ICategory.btnModifier { get => btnModifier.Enabled; set => btnModifier.Enabled = Convert.ToBoolean(value); }
+        public object btnRemove { get => btnSuprimer.Enabled; set => btnSuprimer.Enabled = Convert.ToBoolean(value); }
+        public object btnRemoveAll { get => btnSuprimerAll.Enabled; set => btnSuprimerAll.Enabled = Convert.ToBoolean(value); }
+        public string CountryGetFocuseName { get => gridViewCategory.GetFocusedRowCellValue("رقم التصنيف").ToString(); set => gridViewCategory.GetFocusedRowCellValue("رقم التصنيف").ToString(); }
+        public string CountryGetFocuseId { get => gridViewCategory.GetFocusedRowCellValue("اسم التصنيف").ToString(); set => gridViewCategory.GetFocusedRowCellValue("اسم التصنيف").ToString(); }
+        #endregion
+
+        #region Events
+        private void Control_Category_Load(object sender, EventArgs e)
+        {
+            catPresenter.AutoNumber();
+        }
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            bool check = catPresenter.CatInsert();
+            if (check)
+            {
+                toastNotificationsManager1.ShowNotification("71956731-18dc-44cc-b3b9-0e7f5f1fe056");
+                LoadData();
+            }
+            else
+            {
+                toastNotificationsManager1.ShowNotification("46789b9d-25d7-4fbd-b527-570122da7d06");
+            }
+        }
+        private void btnModifier_Click(object sender, EventArgs e)
+        {
+            bool check = catPresenter.CatUpdate();
+            if (check)
+            {
+                toastNotificationsManager1.ShowNotification("71956731-18dc-44cc-b3b9-0e7f5f1fe056");
+                LoadData();
+            }
+            else
+            {
+                toastNotificationsManager1.ShowNotification("46789b9d-25d7-4fbd-b527-570122da7d06");
+            }
+        }
+        private void btnSuprimer_Click(object sender, EventArgs e)
+        {
+            bool check = catPresenter.CatDelete();
+            if (check)
+            {
+                toastNotificationsManager1.ShowNotification("71956731-18dc-44cc-b3b9-0e7f5f1fe056");
+                LoadData();
+            }
+            else
+            {
+                toastNotificationsManager1.ShowNotification("46789b9d-25d7-4fbd-b527-570122da7d06");
+            }
+        }
+        private void btnSuprimerAll_Click(object sender, EventArgs e)
+        {
+            bool check = catPresenter.CatDeleteAll();
+            if (check)
+            {
+                toastNotificationsManager1.ShowNotification("71956731-18dc-44cc-b3b9-0e7f5f1fe056");
+                LoadData();
+            }
+            else
+            {
+                toastNotificationsManager1.ShowNotification("46789b9d-25d7-4fbd-b527-570122da7d06");
+            }
+        }
+        private void btnRefriche_Click(object sender, EventArgs e)
+        {
+            catPresenter.AutoNumber();
+        }
+        private void btnPrint_Click(object sender, EventArgs e)
+        {
+            gridControlCategory.ShowPrintPreview();
+        }
+        private void gridControlCategory_DoubleClick(object sender, EventArgs e)
+        {
+            try
+            {
+                if (catPresenter.getCountAllRow() != 0)
+                {
+                    txbIDCategory.Text = gridViewCategory.GetFocusedRowCellValue("رقم التصنيف").ToString();
+                    txbNameCategory.Text = gridViewCategory.GetFocusedRowCellValue("اسم التصنيف").ToString();
+                    catPresenter.UpdateRomoveButtons();
+                }
+            }
+            catch (Exception) { }
+        }
+        #endregion
+
+        #region Load DataBase
+        private void LoadData()
+        {
+            // This line of code is generated by Data Source Configuration Wizard
+            // Fill the SqlDataSource asynchronously
+            sqlDataSource1.FillAsync();
+        }
+
+        #endregion
+    }
+}
